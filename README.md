@@ -1,4 +1,4 @@
-# SPECTRUM DYE WORKS - Smart Waste Water Prediction Treatment
+# Smart Waste Water Prediction Treatment
 
 Production-ready digital twin + forecasting system for wastewater treatment monitoring.
 

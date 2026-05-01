@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SPECTRUM DYE WORKS</title>
+    <title>THE INDUSTRY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -18,66 +18,435 @@
         justify-content: center;
         min-height: 100vh;
         padding: 0;
+        background:
+          radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.35), transparent 50%),
+          radial-gradient(circle at 85% 30%, rgba(14, 116, 144, 0.4), transparent 50%),
+          radial-gradient(circle at 50% 80%, rgba(15, 118, 110, 0.35), transparent 50%),
+          #080c14;
+        background-attachment: fixed;
       }
-      
+
+      #loginSection.login-shell.login-cover-open {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        perspective: 1800px;
+        transform-style: preserve-3d;
+        animation: loginCoverFade 1.55s cubic-bezier(0.2, 0.84, 0.2, 1) forwards;
+        will-change: opacity, filter;
+      }
+
+      #loginSection.login-shell.login-cover-open .glass-login-container {
+        transform-origin: left center;
+        animation: loginCoverOpen 1.55s cubic-bezier(0.2, 0.84, 0.2, 1) forwards;
+        will-change: transform, opacity, filter;
+      }
+
+      #loginSection.login-shell.login-cover-open .glass-login-card {
+        animation: loginCardLift 1.55s cubic-bezier(0.2, 0.84, 0.2, 1) forwards;
+      }
+
+      #dashboardSection.dashboard-shell.dashboard-enter {
+        animation: dashboardEnter 1.15s cubic-bezier(0.2, 0.84, 0.2, 1) both;
+      }
+
+      @keyframes loginCoverOpen {
+        0% {
+          transform: perspective(1800px) rotateY(0deg) translateX(0) scale(1);
+          opacity: 1;
+          filter: brightness(1);
+        }
+        45% {
+          transform: perspective(1800px) rotateY(-34deg) translateX(-2vw) scale(0.99);
+          opacity: 0.98;
+          filter: brightness(0.98);
+        }
+        100% {
+          transform: perspective(1800px) rotateY(-96deg) translateX(-12vw) scale(0.96);
+          opacity: 0;
+          filter: brightness(0.72) blur(1px);
+        }
+      }
+
+      @keyframes loginCardLift {
+        0% {
+          box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45), 0 0 50px rgba(20, 184, 166, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+        60% {
+          box-shadow: 46px 30px 90px rgba(0, 0, 0, 0.48), -10px 0 34px rgba(125, 211, 252, 0.16), inset -18px 0 28px rgba(0, 0, 0, 0.24);
+        }
+        100% {
+          box-shadow: 58px 36px 110px rgba(0, 0, 0, 0.44), inset -24px 0 34px rgba(0, 0, 0, 0.32);
+        }
+      }
+
+      @keyframes loginCoverFade {
+        0%, 72% { opacity: 1; }
+        100% { opacity: 0; filter: blur(1px); }
+      }
+
+      @keyframes dashboardEnter {
+        0% {
+          opacity: 0;
+          transform: translateY(18px) scale(0.975);
+          filter: blur(8px) brightness(0.72);
+        }
+        58% {
+          opacity: 0.78;
+          transform: translateY(4px) scale(0.994);
+          filter: blur(2px) brightness(0.94);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          filter: blur(0) brightness(1);
+        }
+      }
+
       /* Underwater Light Caustics */
+      .surface-shimmer {
+        position: absolute;
+        inset: -18% -12%;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at 20% 14%, transparent 0 28%, rgba(125, 211, 252, 0.09) 29%, transparent 32%),
+          radial-gradient(ellipse at 72% 10%, transparent 0 24%, rgba(45, 212, 191, 0.08) 25%, transparent 29%),
+          repeating-radial-gradient(ellipse at 50% -8%, transparent 0 42px, rgba(186, 230, 253, 0.055) 44px 46px, transparent 50px 92px);
+        filter: blur(1.8px);
+        mix-blend-mode: screen;
+        opacity: 0.72;
+        animation: shimmerDrift 26s ease-in-out infinite alternate;
+      }
+
+      @keyframes shimmerDrift {
+        0% { transform: translate3d(-2%, -1%, 0) rotate(-1deg) scale(1); opacity: 0.48; }
+        100% { transform: translate3d(2%, 1%, 0) rotate(1deg) scale(1.04); opacity: 0.78; }
+      }
+
+      .light-rays {
+        position: absolute;
+        inset: -18% -12% 0;
+        z-index: 2;
+        pointer-events: none;
+        background:
+          linear-gradient(104deg, transparent 0 9%, rgba(224, 242, 254, 0.12) 15%, transparent 23% 100%),
+          linear-gradient(76deg, transparent 0 39%, rgba(103, 232, 249, 0.08) 47%, transparent 58% 100%),
+          linear-gradient(96deg, transparent 0 66%, rgba(167, 243, 208, 0.065) 73%, transparent 82% 100%);
+        filter: blur(9px);
+        mix-blend-mode: screen;
+        opacity: 0.78;
+        animation: raySweep 32s ease-in-out infinite alternate;
+      }
+
+      @keyframes raySweep {
+        0% { transform: translateX(-2%) skewX(-3deg); opacity: 0.48; }
+        100% { transform: translateX(3%) skewX(3deg); opacity: 0.82; }
+      }
+
       .caustics {
         position: absolute;
         top: -10%; left: 0; width: 100%; height: 110%;
-        background: radial-gradient(circle at 20% -10%, rgba(45, 212, 191, 0.15) 0%, transparent 40%),
-                    radial-gradient(circle at 80% -10%, rgba(52, 211, 153, 0.1) 0%, transparent 40%);
-        z-index: 1;
+        background:
+          radial-gradient(ellipse at 28% 18%, rgba(125, 211, 252, 0.14) 0%, transparent 34%),
+          radial-gradient(ellipse at 78% 10%, rgba(45, 212, 191, 0.12) 0%, transparent 36%),
+          radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.05) 0%, transparent 46%);
+        z-index: 2;
         pointer-events: none;
-        animation: pulseLight 8s ease-in-out infinite alternate;
+        animation: pollutionPulse 18s ease-in-out infinite alternate;
       }
-      @keyframes pulseLight {
-        0% { opacity: 0.6; transform: scale(1); }
-        100% { opacity: 1; transform: scale(1.1) translateY(2%); }
+      @keyframes pollutionPulse {
+        0% { opacity: 0.5; transform: scale(1); }
+        100% { opacity: 0.8; transform: scale(1.15) translateY(-3%); }
       }
 
-      .bg-company-name {
+      /* Water Pollution Contamination Cloud */
+      .pollution-cloud {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
-        font-size: 14vw;
-        font-weight: 900;
-        background: linear-gradient(180deg, rgba(45, 212, 191, 0.18) 0%, rgba(6, 78, 59, 0.02) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        text-align: center;
-        line-height: 0.9;
-        user-select: none;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(45, 212, 191, 0.14), rgba(14, 116, 144, 0.04), transparent 68%);
+        filter: blur(70px);
+        animation: pollutionDrift 24s ease-in-out infinite;
         z-index: 2;
-        letter-spacing: 0.03em;
         pointer-events: none;
-        /* Mirror Reflection */
-        -webkit-box-reflect: below -0.05em linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.3) 100%);
       }
+      @keyframes pollutionDrift {
+        0% { transform: translateX(-10%) translateY(5%) scale(1); opacity: 0.4; }
+        50% { transform: translateX(15%) translateY(-8%) scale(1.2); opacity: 0.6; }
+        100% { transform: translateX(-10%) translateY(5%) scale(1); opacity: 0.4; }
+      }
+      .pc1 { width: 400px; height: 400px; top: 5%; left: 10%; animation-duration: 16s; }
+      .pc2 { width: 500px; height: 500px; top: 15%; right: 5%; animation-duration: 20s; animation-delay: -5s; }
+      .pc3 { width: 350px; height: 350px; bottom: 10%; left: 5%; animation-duration: 18s; animation-delay: -10s; }
+
+      /* Turbulent Pollutant Particles */
+      .pollutant {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(186, 230, 253, 0.72);
+        box-shadow: 0 0 8px rgba(125, 211, 252, 0.45), 0 0 18px rgba(45, 212, 191, 0.22);
+        opacity: 0;
+        animation: turbulentFlow ease-in-out infinite;
+        z-index: 4;
+        pointer-events: none;
+      }
+      @keyframes turbulentFlow {
+        0% { transform: translateY(110vh) translateX(0) rotateZ(0deg); opacity: 0; }
+        12% { opacity: 0.45; }
+        50% { transform: translateY(50vh) translateX(32px) rotateZ(180deg) scale(0.78); opacity: 0.72; }
+        90% { opacity: 0.35; }
+        100% { transform: translateY(-10vh) translateX(-26px) rotateZ(360deg) scale(0.5); opacity: 0; }
+      }
+      .p1 { width: 8px; height: 8px; left: 5%; animation-duration: 18s; animation-delay: 0s; }
+      .p2 { width: 6px; height: 6px; left: 25%; animation-duration: 22s; animation-delay: -3s; }
+      .p3 { width: 7px; height: 7px; left: 45%; animation-duration: 20s; animation-delay: -7s; }
+      .p4 { width: 5px; height: 5px; left: 65%; animation-duration: 19s; animation-delay: -5s; }
+      .p5 { width: 9px; height: 9px; left: 85%; animation-duration: 23s; animation-delay: -10s; }
+      .p6 { width: 6px; height: 6px; left: 40%; animation-duration: 21s; animation-delay: -14s; }
+
+      /* Floating treatment mascot icons */
+      .floating-treatment-icons {
+        position: absolute;
+        inset: 0;
+        z-index: 7;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .treatment-icon {
+        position: absolute;
+        width: var(--icon-size, 88px);
+        height: var(--icon-size, 88px);
+        opacity: var(--icon-opacity, 0.32);
+        filter: drop-shadow(0 14px 28px rgba(236, 72, 153, 0.18));
+        animation: treatmentFloat var(--icon-duration, 18s) ease-in-out infinite;
+      }
+
+      .treatment-icon::before {
+        content: "";
+        position: absolute;
+        inset: 12% 18% 8% 16%;
+        border-radius: 58% 42% 52% 48%;
+        background: linear-gradient(135deg, rgba(244, 114, 182, 0.92), rgba(216, 180, 254, 0.82));
+        clip-path: polygon(0 0, 100% 17%, 88% 54%, 100% 94%, 28% 88%, 0 55%);
+        box-shadow: inset 14px -16px 22px rgba(168, 85, 247, 0.18);
+      }
+
+      .treatment-icon::after {
+        content: "";
+        position: absolute;
+        left: 20%;
+        bottom: 14%;
+        width: 30%;
+        height: 18%;
+        border-radius: 55% 12% 12% 55%;
+        background: linear-gradient(90deg, rgba(244, 114, 182, 0.88), rgba(251, 207, 232, 0.74));
+      }
+
+      .treatment-icon .stripe {
+        position: absolute;
+        top: 18%;
+        height: 62%;
+        width: 10%;
+        border-radius: 999px;
+        background: rgba(17, 24, 39, 0.74);
+        transform: rotate(-20deg);
+      }
+
+      .treatment-icon .stripe-one {
+        right: 35%;
+      }
+
+      .treatment-icon .stripe-two {
+        right: 22%;
+        top: 27%;
+        height: 52%;
+      }
+
+      .treatment-icon .eye {
+        position: absolute;
+        top: 35%;
+        left: 38%;
+        width: 8%;
+        height: 8%;
+        border-radius: 50%;
+        background: rgba(17, 24, 39, 0.78);
+      }
+
+      .ti1 { --icon-size: 96px; --icon-opacity: 0.22; --icon-duration: 19s; top: 13%; left: 7%; animation-delay: -2s; }
+      .ti2 { --icon-size: 70px; --icon-opacity: 0.18; --icon-duration: 23s; top: 23%; right: 13%; animation-delay: -8s; }
+      .ti3 { --icon-size: 120px; --icon-opacity: 0.14; --icon-duration: 27s; bottom: 17%; left: 16%; animation-delay: -13s; }
+      .ti4 { --icon-size: 82px; --icon-opacity: 0.20; --icon-duration: 21s; bottom: 24%; right: 9%; animation-delay: -5s; }
+      .ti5 { --icon-size: 58px; --icon-opacity: 0.16; --icon-duration: 25s; top: 55%; left: 5%; animation-delay: -16s; }
+
+      @keyframes treatmentFloat {
+        0% { transform: translate3d(0, 0, 0) rotate(-7deg) scale(1); }
+        35% { transform: translate3d(28px, -42px, 0) rotate(8deg) scale(1.04); }
+        70% { transform: translate3d(-22px, -82px, 0) rotate(-4deg) scale(0.97); }
+        100% { transform: translate3d(0, 0, 0) rotate(-7deg) scale(1); }
+      }
+
+      .current-streaks {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 0.38;
+      }
+
+      .current-streak {
+        position: absolute;
+        left: -34vw;
+        width: 34vw;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.22), rgba(45, 212, 191, 0.16), transparent);
+        filter: blur(1.2px);
+        animation: currentFlow linear infinite;
+      }
+
+      @keyframes currentFlow {
+        0% { transform: translateX(0) translateY(0); opacity: 0; }
+        12% { opacity: 0.32; }
+        70% { opacity: 0.18; }
+        100% { transform: translateX(158vw) translateY(-28px); opacity: 0; }
+      }
+
+      .cs1 { top: 18%; animation-duration: 28s; animation-delay: -2s; }
+      .cs2 { top: 34%; animation-duration: 34s; animation-delay: -11s; width: 26vw; }
+      .cs3 { top: 58%; animation-duration: 31s; animation-delay: -7s; width: 40vw; }
+      .cs4 { top: 76%; animation-duration: 38s; animation-delay: -15s; width: 30vw; }
+
+      /* Extra water-pollution ripples + micro-foam (login backside) */
+      .ripples {
+        position: absolute;
+        inset: -20% 0 0 0;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.75;
+        mix-blend-mode: screen;
+      }
+
+      .ripple {
+        position: absolute;
+        left: 50%;
+        bottom: -42%;
+        width: 68vmax;
+        height: 68vmax;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(34, 211, 238, 0.22) 0%,
+          rgba(16, 185, 129, 0.12) 22%,
+          rgba(59, 130, 246, 0.06) 45%,
+          rgba(251, 191, 36, 0.04) 60%,
+          transparent 66%
+        );
+        filter: blur(0.6px);
+        animation: rippleExpand 9s ease-in-out infinite;
+      }
+
+      .r1 { animation-duration: 9s; animation-delay: -1.5s; opacity: 0.55; transform: translateX(-50%) scale(0.18); }
+      .r2 { width: 55vmax; height: 55vmax; animation-duration: 12s; animation-delay: -4.2s; opacity: 0.40; }
+      .r3 { width: 78vmax; height: 78vmax; animation-duration: 15s; animation-delay: -8.4s; opacity: 0.32; }
+
+      @keyframes rippleExpand {
+        0% { transform: translateX(-50%) scale(0.18); opacity: 0; }
+        18% { opacity: 0.60; }
+        55% { opacity: 0.35; }
+        100% { transform: translateX(-50%) scale(0.92); opacity: 0; }
+      }
+
+      .micro-bubbles {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        opacity: 0.68;
+      }
+
+      .micro-bubble {
+        position: absolute;
+        bottom: -12px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        border: 1px solid rgba(191, 219, 254, 0.34);
+        background: radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.30), rgba(125, 211, 252, 0.11) 42%, rgba(59, 130, 246, 0.04));
+        box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.12), 0 0 12px rgba(34, 211, 238, 0.14);
+        opacity: 0;
+        animation: microRise 9s ease-in infinite;
+        filter: blur(0.1px);
+      }
+
+      @keyframes microRise {
+        0% { transform: translateX(0) translateY(0) scale(0.7); opacity: 0; }
+        12% { opacity: 0.58; }
+        42% { transform: translateX(-14px) translateY(-52vh) scale(1); opacity: 0.42; }
+        72% { opacity: 0.26; }
+        100% { transform: translateX(28px) translateY(-130vh) scale(1.45); opacity: 0; }
+      }
+
+      .mb1 { left: 8%;  animation-duration: 10.5s; animation-delay: -1.2s; }
+      .mb2 { left: 18%; animation-duration: 12.4s; animation-delay: -3.8s; width: 6px; height: 6px; }
+      .mb3 { left: 32%; animation-duration: 11.8s; animation-delay: -2.6s; width: 8px; height: 8px; }
+      .mb4 { left: 47%; animation-duration: 13.1s; animation-delay: -0.4s; }
+      .mb5 { left: 62%; animation-duration: 10.8s; animation-delay: -4.9s; width: 6px; height: 6px; }
+      .mb6 { left: 74%; animation-duration: 13.8s; animation-delay: -2.1s; width: 9px; height: 9px; }
+      .mb7 { left: 86%; animation-duration: 11.6s; animation-delay: -5.7s; }
+      .mb8 { left: 55%; animation-duration: 12.2s; animation-delay: -3.2s; width: 6px; height: 6px; }
+
+      .depth-haze {
+        position: absolute;
+        inset: 0;
+        z-index: 6;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at center, transparent 0 34%, rgba(3, 7, 18, 0.18) 72%, rgba(3, 7, 18, 0.42) 100%),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.04), transparent 22%, rgba(2, 6, 23, 0.18));
+        mix-blend-mode: multiply;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .caustics,
+        .pollution-cloud,
+        .pollutant,
+        .treatment-icon,
+        .surface-shimmer,
+        .light-rays,
+        .current-streak,
+        .depth-haze,
+        .wave,
+        .biomass,
+        .bubble,
+        .ripple,
+        .micro-bubble {
+          animation: none !important;
+        }
+      }
+
       .glass-login-container {
         position: relative;
-        z-index: 10;
+        z-index: 20;
         width: 100%;
-        max-width: 440px;
-        padding: 20px;
+        max-width: 560px;
+        padding: 24px;
       }
       .glass-login-card {
-        background: rgba(2, 16, 24, 0.6);
-        backdrop-filter: blur(28px);
-        -webkit-backdrop-filter: blur(28px);
-        border: 1px solid rgba(20, 184, 166, 0.15);
-        border-top: 1px solid rgba(20, 184, 166, 0.4);
-        border-left: 1px solid rgba(20, 184, 166, 0.3);
-        border-radius: 24px;
-        padding: 48px 40px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(6, 78, 59, 0.4), inset 0 1px 0 rgba(45, 212, 191, 0.2);
+        background: rgba(6, 22, 28, 0.12);
+        backdrop-filter: blur(48px) saturate(170%);
+        -webkit-backdrop-filter: blur(48px) saturate(170%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-left: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 28px;
+        padding: 56px 44px;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45), 0 0 50px rgba(20, 184, 166, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        color: #ffffff;
+        gap: 22px;
+        color: rgba(255,255,255,0.98);
         position: relative;
         overflow: hidden;
       }
@@ -97,16 +466,38 @@
       }
       .glass-login-card h2 {
         margin: 0;
-        font-size: 32px;
+        font-size: 36px;
         font-weight: 700;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
         text-align: center;
+      }
+      .glass-login-card .login-brand-title {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 40px;
+        line-height: 1;
+        letter-spacing: 1px;
+      }
+      .glass-login-card .login-brand-subtitle {
+        margin: 12px 0 16px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
       }
       .glass-login-card p.subtitle {
         margin: 8px 0 16px;
         color: rgba(255, 255, 255, 0.6);
-        font-size: 15px;
+        font-size: 16px;
         text-align: center;
+      }
+      .glass-login-card p.subtitle.login-brand-subtitle {
+        margin: 12px 0 16px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
       }
       .glass-input-group {
         display: flex;
@@ -114,47 +505,48 @@
         gap: 8px;
       }
       .glass-input-group label {
-        font-size: 13px;
+        font-size: 16px;
         font-weight: 600;
         color: rgba(255, 255, 255, 0.8);
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
       .glass-input-group input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.10);
         color: #ffffff;
-        padding: 14px 16px;
+        padding: 18px 20px;
         border-radius: 12px;
-        font-size: 16px;
+        font-size: 20px;
         outline: none;
         transition: all 0.3s ease;
+        text-shadow: 0 1px 0 rgba(0,0,0,0.35);
       }
       .glass-input-group input:focus {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.12);
       }
       .glass-btn {
         background: linear-gradient(135deg, #0d9488 0%, #047857 100%);
         color: #ffffff;
         border: none;
-        padding: 16px;
+        padding: 18px;
         border-radius: 12px;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 600;
         cursor: pointer;
-        margin-top: 12px;
+        margin-top: 6px;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(4, 120, 87, 0.5);
+        box-shadow: 0 8px 24px rgba(4, 120, 87, 0.45);
       }
       .glass-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(13, 148, 136, 0.7);
       }
       .glass-login-card small {
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 13px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 14px;
         text-align: center;
         display: block;
       }
@@ -169,28 +561,40 @@
       .bubble {
         position: absolute;
         border-radius: 50%;
-        border: 1px solid rgba(20, 184, 166, 0.25);
-        background: radial-gradient(circle at 30% 30%, rgba(20, 184, 166, 0.15), rgba(2, 44, 34, 0.02));
-        box-shadow: inset 0 0 15px rgba(20, 184, 166, 0.1), 0 4px 15px rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(2px);
-        animation: riseBubble linear infinite;
+        border: 1px solid rgba(191, 219, 254, 0.28);
+        background: radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.26), rgba(125, 211, 252, 0.10) 38%, rgba(2, 44, 34, 0.02) 72%);
+        box-shadow: inset -10px -12px 24px rgba(2, 6, 23, 0.22), inset 8px 8px 18px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.32);
+        backdrop-filter: blur(3px);
+        animation: riseBubble ease-in-out infinite;
         z-index: 5;
         pointer-events: none;
       }
-      @keyframes riseBubble {
-        0% { transform: translateY(110vh) scale(0.5) translateX(0); opacity: 0; }
-        15% { opacity: 1; }
-        50% { transform: translateY(50vh) scale(1) translateX(30px); }
-        85% { opacity: 1; }
-        100% { transform: translateY(-15vh) scale(1.2) translateX(-20px); opacity: 0; }
+      .bubble::before {
+        content: "";
+        position: absolute;
+        top: 18%;
+        left: 24%;
+        width: 24%;
+        height: 24%;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.34);
+        filter: blur(1px);
       }
-      .b1 { width: 60px; height: 60px; left: 10%; animation-duration: 14s; animation-delay: 0s; }
-      .b2 { width: 120px; height: 120px; left: 80%; animation-duration: 19s; animation-delay: -4s; }
-      .b3 { width: 40px; height: 40px; left: 40%; animation-duration: 11s; animation-delay: -2s; }
-      .b4 { width: 90px; height: 90px; left: 25%; animation-duration: 16s; animation-delay: -7s; }
-      .b5 { width: 70px; height: 70px; left: 65%; animation-duration: 13s; animation-delay: -10s; }
-      .b6 { width: 50px; height: 50px; left: 90%; animation-duration: 15s; animation-delay: -1s; }
-      .b7 { width: 110px; height: 110px; left: 50%; animation-duration: 21s; animation-delay: -8s; }
+      @keyframes riseBubble {
+        0% { transform: translateY(110vh) scale(0.45) translateX(0); opacity: 0; }
+        14% { opacity: 0.86; }
+        38% { transform: translateY(66vh) scale(0.82) translateX(28px); }
+        64% { transform: translateY(34vh) scale(1.02) translateX(-18px); }
+        86% { opacity: 0.8; }
+        100% { transform: translateY(-15vh) scale(1.18) translateX(34px); opacity: 0; }
+      }
+      .b1 { width: 54px; height: 54px; left: 10%; animation-duration: 19s; animation-delay: 0s; }
+      .b2 { width: 104px; height: 104px; left: 82%; animation-duration: 27s; animation-delay: -4s; opacity: 0.72; }
+      .b3 { width: 34px; height: 34px; left: 40%; animation-duration: 16s; animation-delay: -2s; }
+      .b4 { width: 82px; height: 82px; left: 24%; animation-duration: 24s; animation-delay: -7s; opacity: 0.76; }
+      .b5 { width: 62px; height: 62px; left: 66%; animation-duration: 18s; animation-delay: -10s; }
+      .b6 { width: 42px; height: 42px; left: 91%; animation-duration: 21s; animation-delay: -1s; opacity: 0.68; }
+      .b7 { width: 96px; height: 96px; left: 50%; animation-duration: 30s; animation-delay: -8s; opacity: 0.72; }
       
       /* Multi-Layered Fluid Waves */
       .wave-container {
@@ -261,8 +665,36 @@
   </head>
   <body>
     <section id="loginSection" class="login-shell">
+      <div class="surface-shimmer" aria-hidden="true"></div>
+      <div class="light-rays" aria-hidden="true"></div>
+
       <!-- Illuminated Water Environment -->
       <div class="caustics"></div>
+      
+      <!-- Water Pollution Contamination Clouds -->
+      <div class="pollution-cloud pc1"></div>
+      <div class="pollution-cloud pc2"></div>
+      <div class="pollution-cloud pc3"></div>
+
+      <!-- Turbulent Pollutant Particles -->
+      <div class="pollutant p1"></div><div class="pollutant p2"></div>
+      <div class="pollutant p3"></div><div class="pollutant p4"></div>
+      <div class="pollutant p5"></div><div class="pollutant p6"></div>
+
+      <div class="floating-treatment-icons" aria-hidden="true">
+        <div class="treatment-icon ti1"><span class="stripe stripe-one"></span><span class="stripe stripe-two"></span><span class="eye"></span></div>
+        <div class="treatment-icon ti2"><span class="stripe stripe-one"></span><span class="stripe stripe-two"></span><span class="eye"></span></div>
+        <div class="treatment-icon ti3"><span class="stripe stripe-one"></span><span class="stripe stripe-two"></span><span class="eye"></span></div>
+        <div class="treatment-icon ti4"><span class="stripe stripe-one"></span><span class="stripe stripe-two"></span><span class="eye"></span></div>
+        <div class="treatment-icon ti5"><span class="stripe stripe-one"></span><span class="stripe stripe-two"></span><span class="eye"></span></div>
+      </div>
+
+      <div class="current-streaks" aria-hidden="true">
+        <div class="current-streak cs1"></div>
+        <div class="current-streak cs2"></div>
+        <div class="current-streak cs3"></div>
+        <div class="current-streak cs4"></div>
+      </div>
       
       <!-- Fluid Separation Waves -->
       <div class="wave-container">
@@ -282,15 +714,35 @@
       <div class="bubble b5"></div><div class="bubble b6"></div>
       <div class="bubble b7"></div>
       
-      <div class="bg-company-name">
-        SPECTRUM<br>DYE WORKS
+      <!-- Water pollution ripples (login backside) -->
+      <div class="ripples" aria-hidden="true">
+        <div class="ripple r1"></div>
+        <div class="ripple r2"></div>
+        <div class="ripple r3"></div>
       </div>
+
+      <!-- Micro-foam / micro-bubbles -->
+      <div class="micro-bubbles" aria-hidden="true">
+        <div class="micro-bubble mb1"></div>
+        <div class="micro-bubble mb2"></div>
+        <div class="micro-bubble mb3"></div>
+        <div class="micro-bubble mb4"></div>
+        <div class="micro-bubble mb5"></div>
+        <div class="micro-bubble mb6"></div>
+        <div class="micro-bubble mb7"></div>
+        <div class="micro-bubble mb8"></div>
+      </div>
+
+      <div class="depth-haze" aria-hidden="true"></div>
       
       <div class="glass-login-container">
         <form id="loginForm" class="glass-login-card">
           <div>
-            <h2>Welcome Back</h2>
-            <p class="subtitle">Smart Water Prediction Treatment</p>
+            <h2 class="login-brand-title">
+              <span>THE</span>
+              <span>INDUSTRY</span>
+            </h2>
+            <p class="subtitle login-brand-subtitle">Water Quality Data</p>
           </div>
           
           <div class="glass-input-group">
@@ -317,7 +769,7 @@
           <div class="brand">
             <span class="brand-mark">S</span>
             <div>
-              <h1>SPECTRUM DYE WORKS</h1>
+              <h1>THE INDUSTRY</h1>
             <p>Smart Water Prediction Treatment</p>
             </div>
           </div>
@@ -339,7 +791,7 @@
         <div id="homeView" class="view active">
           <div class="hero-banner">
             <div>
-              <h2 id="homeGreeting">Welcome to Spectrum Dye Works 💧</h2>
+              <h2 id="homeGreeting">Welcome to THE INDUSTRY 💧</h2>
               <p>System is monitoring 6 critical parameters in real-time.</p>
             </div>
             <div id="homeSystemStatus" class="status-pill normal">System Normal</div>

@@ -4,7 +4,7 @@ const API_BASE = "/api";
 document.documentElement.style.fontSize = "115%";
 
 // Set the browser tab title
-document.title = "SPECTRUM DYE WORKS - Smart Waste Water Prediction Treatment";
+document.title = "Smart Waste Water Prediction Treatment";
 
 // Increase default font size for the graphs if Chart.js is loaded
 if (typeof Chart !== "undefined") {
@@ -866,7 +866,7 @@ async function exportDailyDataToPDF(dayLabel, records) {
   doc.setTextColor(229, 237, 248);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
-  doc.text("SPECTRUM DYE WORKS", marginX, 15);
+  doc.text("SMART WWTP", marginX, 15);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text("Waste Water Prediction Treatment", marginX, 22);
@@ -974,6 +974,94 @@ function renderHome(records) {
   }
 }
 
+function createWaterAnimation() {
+  const canvas = document.createElement('canvas');
+
+  // Style canvas to be a full page background
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.zIndex = '-1'; // Behind everything
+  canvas.style.opacity = '0.25'; // Subtle pollution effect
+  canvas.style.pointerEvents = 'none'; // Prevent it from blocking clicks
+
+  document.body.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const particleCount = 120;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    createParticles();
+  }
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      
+      // Mix of floating toxic bubbles and sinking sludge
+      this.isBubble = Math.random() > 0.5;
+      this.vx = Math.random() * 0.6 - 0.3;
+      // Bubbles rise, sludge sinks
+      this.vy = this.isBubble ? -(Math.random() * 0.6 + 0.2) : (Math.random() * 0.4 + 0.1); 
+      this.radius = this.isBubble ? Math.random() * 4 + 1.5 : Math.random() * 2.5 + 1;
+      
+      // Colors representing water pollution: Toxic Neon Green, Dark Sludge, Murky Grey
+      const colors = [
+        `rgba(57, 255, 20, ${Math.random() * 0.3 + 0.1})`,
+        `rgba(101, 67, 33, ${Math.random() * 0.4 + 0.2})`,
+        `rgba(80, 90, 80, ${Math.random() * 0.3 + 0.1})`
+      ];
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+
+      if (this.isBubble && this.y < -10) {
+        this.y = canvas.height + 10;
+        this.x = Math.random() * canvas.width;
+      } else if (!this.isBubble && this.y > canvas.height + 10) {
+        this.y = -10;
+        this.x = Math.random() * canvas.width;
+      }
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+  }
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  animate();
+}
+
 async function loadDashboard() {
   if (isDashboardLoading) return;
   isDashboardLoading = true;
@@ -1025,6 +1113,29 @@ function startHourlyRefresh() {
   }, 60 * 60 * 1000);
 }
 
+function transitionToDashboard() {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  dashboardSection.classList.remove("hidden");
+
+  if (reduceMotion) {
+    loginSection.classList.add("hidden");
+    return Promise.resolve();
+  }
+
+  loginSection.classList.add("login-cover-open");
+  dashboardSection.classList.add("dashboard-enter");
+
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      loginSection.classList.add("hidden");
+      loginSection.classList.remove("login-cover-open");
+      dashboardSection.classList.remove("dashboard-enter");
+      resolve();
+    }, 1550);
+  });
+}
+
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   loginError.textContent = "";
@@ -1045,9 +1156,10 @@ loginForm.addEventListener("submit", async (event) => {
     token = data.access_token;
     role = data.role;
 
-    loginSection.classList.add("hidden");
-    dashboardSection.classList.remove("hidden");
-    await loadDashboard();
+    await Promise.all([
+      transitionToDashboard(),
+      loadDashboard(),
+    ]);
     startHourlyRefresh();
   } catch (error) {
     loginError.textContent = error.message;
@@ -1063,6 +1175,8 @@ logoutBtn.addEventListener("click", () => {
   }
   dashboardSection.classList.add("hidden");
   loginSection.classList.remove("hidden");
+  loginSection.classList.remove("login-cover-open");
+  dashboardSection.classList.remove("dashboard-enter");
 });
 
 document.querySelectorAll(".tab-btn").forEach((button) => {
@@ -1094,3 +1208,5 @@ modal.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeModal();
 });
+
+createWaterAnimation();

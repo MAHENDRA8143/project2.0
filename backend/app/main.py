@@ -43,3 +43,14 @@ def daily_view():
     if dv_file.exists():
         return FileResponse(dv_file)
     return {"message": "daily_view.html not found. Make sure you saved it in the frontend folder!"}
+
+
+docs_dir = Path(__file__).resolve().parents[2] / "docs"
+login_bg_file = docs_dir / "gallery_images" / "upscaled_4k.png"
+
+
+@app.get("/login_bg")
+def login_background():
+    if login_bg_file.exists():
+        return FileResponse(login_bg_file)
+    return {"message": "Login background image not found at docs/gallery_images/upscaled_4k.png"}

@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const { dayLabel, records } = JSON.parse(dailyDataString);
 
     // Set title
-    document.title = `Hourly Forecast for ${dayLabel} - SPECTRUM DYE WORKS`;
+    document.title = `Hourly Forecast for ${dayLabel} - THE INDUSTRY`;
     document.getElementById("dailyViewTitle").textContent = `Hourly Forecast for ${dayLabel}`;
 
     // Render Table
