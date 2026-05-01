@@ -1,0 +1,734 @@
+
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>STP Visual Gallery</title>
+      <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe3ee;
+      --shadow: 0 22px 54px rgba(15, 23, 42, 0.06);
+      --accent: #2563eb;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 24rem),
+        radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.08), transparent 24rem),
+        var(--bg);
+    }
+    .wrap { width: min(1500px, calc(100% - 32px)); margin: 24px auto 40px; }
+    .hero {
+      padding: 22px 24px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(219, 227, 238, 0.86);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      backdrop-filter: blur(10px);
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 30px; }
+    .hero p { margin: 0; color: var(--muted); max-width: 950px; line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 18px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 18px;
+    }
+    .panel.wide { grid-column: 1 / -1; }
+    .panel-head { margin-bottom: 10px; }
+    .panel-head h2 { margin: 0 0 4px; font-size: 18px; }
+    .panel-head p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    svg { width: 100%; height: auto; display: block; }
+    .table-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+    }
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .table-head h3 { margin: 0 0 4px; font-size: 18px; }
+    .table-head p { margin: 0; color: var(--muted); font-size: 13px; }
+    .pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 8px 12px; border-radius: 999px; background: #eff6ff; color: var(--accent);
+      font-size: 12px; font-weight: 700; border: 1px solid #bfdbfe;
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 13px; white-space: nowrap; }
+    th { background: #f8fafc; color: #334155; font-weight: 700; }
+    .ui-shell {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      padding: 16px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+    .dashboard-preview { display: grid; grid-template-columns: 180px 1fr; gap: 14px; }
+    .ui-sidebar {
+      border: 1px solid #dbe3ee; border-radius: 16px; background: #f8fafc; padding: 14px; display: grid; align-content: start; gap: 10px;
+    }
+    .brand-chip {
+      width: 52px; height: 52px; border-radius: 18px; display: grid; place-items: center;
+      background: #e0efff; color: var(--accent); font-weight: 800; font-size: 18px;
+    }
+    .nav-item { padding: 10px 12px; border-radius: 12px; background: #fff; border: 1px solid #e5edf8; color: #334155; font-size: 13px; }
+    .nav-item.active { background: #eff6ff; border-color: #bfdbfe; color: var(--accent); font-weight: 700; }
+    .ui-main { display: grid; gap: 14px; }
+    .ui-topbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+    .ui-topbar h3, .forecast-panel h4, .chart-panel h4, .alert-panel h4 { margin: 0 0 4px; }
+    .ui-topbar p { margin: 0; color: var(--muted); font-size: 13px; }
+    .status-chip { padding: 8px 12px; border-radius: 999px; background: #ecfdf5; color: var(--green); font-weight: 700; border: 1px solid #bbf7d0; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .metric-card, .forecast-card, .notification, .alert-row {
+      border: 1px solid #e5edf8; border-radius: 16px; background: #fff; padding: 14px; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+    .metric-card span, .forecast-card span, .notification span { color: var(--muted); font-size: 12px; display: block; }
+    .metric-card strong, .forecast-card strong, .notification strong { display: block; margin-top: 8px; font-size: 24px; }
+    .metric-card small, .forecast-card small { color: var(--muted); }
+    .metric-card.warning strong { color: var(--amber); }
+    .metric-card.normal strong { color: var(--green); }
+    .panel-grid { display: grid; grid-template-columns: 1.15fr 0.95fr; gap: 12px; }
+    .chart-panel, .forecast-panel, .alert-panel { border: 1px solid #e5edf8; border-radius: 16px; background: #fff; padding: 14px; }
+    .mini-chart {
+      height: 120px; border-radius: 16px; background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(255,255,255,0.85));
+      border: 1px dashed #bfdbfe; margin-top: 10px;
+      position: relative; overflow: hidden;
+    }
+    .mini-chart::after {
+      content: ""; position: absolute; inset: 28px 16px 22px 16px; border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;
+      background: linear-gradient(180deg, transparent 48%, rgba(37,99,235,0.08) 48%, rgba(37,99,235,0.08) 52%, transparent 52%);
+    }
+    .mini-chart.alt { background: linear-gradient(135deg, rgba(22,163,74,0.12), rgba(255,255,255,0.85)); }
+    .forecast-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+    .forecast-card span { display: inline-block; }
+    .forecast-card.ok strong { color: var(--green); }
+    .forecast-card.warn strong { color: var(--amber); }
+    .alert-panel { display: grid; gap: 10px; }
+    .alert-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .alert-row.warning { border-left: 5px solid var(--amber); }
+    .alert-row.critical { border-left: 5px solid var(--red); }
+    .notification { max-width: 520px; }
+    .notification.warning { border-left: 5px solid var(--amber); }
+    .notification.critical { border-left: 5px solid var(--red); }
+    .alert-preview { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .login-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+    .login-hero { border: 1px solid #dbe3ee; border-radius: 16px; padding: 24px; background: linear-gradient(160deg, #eff6ff, #ffffff); }
+    .login-hero h3 { margin: 14px 0 8px; font-size: 24px; }
+    .login-hero p { margin: 0; color: var(--muted); }
+    .login-form { border: 1px solid #dbe3ee; border-radius: 16px; padding: 24px; background: #fff; display: grid; gap: 10px; align-content: center; }
+    .login-form label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .login-form input {
+      width: 100%; padding: 12px 14px; border: 1px solid #dbe3ee; border-radius: 12px; background: #f8fafc; font: inherit;
+    }
+    .login-form button {
+      margin-top: 6px; padding: 12px 14px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font-weight: 700;
+    }
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+      .dashboard-preview, .login-preview, .panel-grid, .metric-grid { grid-template-columns: 1fr; }
+      .ui-sidebar { grid-template-columns: repeat(2, 1fr); }
+    }
+    </style>
+    </head>
+    <body>
+      <main class="wrap">
+        <section class="hero">
+          <h1>STP Visual Gallery</h1>
+          <p>A single reproducible asset pack for the wastewater treatment project: process flow, scientific graphs, AI architecture, alert workflows, and dashboard/login UI mockups.</p>
+        </section>
+        <section class="grid">
+          
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>1. STP Process Flow</h2>
+        <p>Wastewater treatment sequence</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="280" viewBox="0 0 1180 280" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="280" fill="#ffffff"></rect><text x="34" y="24" font-size="16" fill="#111827" font-weight="600">STP Process Flow Diagram</text><text x="34" y="46" font-size="12.5" fill="#6b7280">Clean wastewater treatment sequence with clear directional arrows.</text><line x1="184.0" x2="194.3" y1="132.0" y2="132.0" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><line x1="344.3" x2="354.7" y1="132.0" y2="132.0" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><line x1="504.7" x2="515.0" y1="132.0" y2="132.0" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><line x1="665.0" x2="675.3" y1="132.0" y2="132.0" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><line x1="825.3" x2="835.7" y1="132.0" y2="132.0" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><line x1="985.7" x2="996.0" y1="132.0" y2="132.0" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><g transform="translate(34.0,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"></rect><rect x="20" y="34" width="110" height="18" rx="9" fill="#dbeafe" stroke="#93c5fd"></rect><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Inlet Wastewater</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Raw influent</text></g><g transform="translate(194.3,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#eff6ff" stroke="#cbd5e1" stroke-width="1.5"></rect><line x1="24" y1="20" x2="24" y2="70" stroke="#64748b" stroke-width="2"></line><line x1="42" y1="20" x2="42" y2="70" stroke="#64748b" stroke-width="2"></line><line x1="60" y1="20" x2="60" y2="70" stroke="#64748b" stroke-width="2"></line><line x1="78" y1="20" x2="78" y2="70" stroke="#64748b" stroke-width="2"></line><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Screening</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Solids removal</text></g><g transform="translate(354.7,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"></rect><path d="M22 68 C 40 58, 56 78, 76 68 S 112 58, 128 68" fill="none" stroke="#60a5fa" stroke-width="2"></path><circle cx="28" cy="22" r="4" fill="#93c5fd"></circle><circle cx="38" cy="15" r="3" fill="#bfdbfe"></circle><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Primary Sedimentation</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Settling tank</text></g><g transform="translate(515.0,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#ecfdf5" stroke="#cbd5e1" stroke-width="1.5"></rect><path d="M22 68 C 40 58, 56 78, 76 68 S 112 58, 128 68" fill="none" stroke="#60a5fa" stroke-width="2"></path><circle cx="28" cy="22" r="4" fill="#93c5fd"></circle><circle cx="38" cy="15" r="3" fill="#bfdbfe"></circle><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Aeration Tank</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Biological oxidation</text></g><g transform="translate(675.3,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"></rect><path d="M22 68 C 40 58, 56 78, 76 68 S 112 58, 128 68" fill="none" stroke="#60a5fa" stroke-width="2"></path><circle cx="28" cy="22" r="4" fill="#93c5fd"></circle><circle cx="38" cy="15" r="3" fill="#bfdbfe"></circle><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Secondary Clarifier</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Final settling</text></g><g transform="translate(835.7,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#fff7ed" stroke="#cbd5e1" stroke-width="1.5"></rect><path d="M56 20 L76 44 L56 68 L36 44 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"></path><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Disinfection</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Contact tank</text></g><g transform="translate(996.0,88.0)"><rect x="0" y="0" width="150" height="88" rx="14" ry="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"></rect><path d="M18 44 H92" stroke="#2563eb" stroke-width="3"></path><path d="M88 30 L112 44 L88 58" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><text x="75.0" y="56" text-anchor="middle" font-size="15" fill="#111827" font-weight="600">Treated Water Outlet</text><text x="75.0" y="73" text-anchor="middle" font-size="11.5" fill="#6b7280">Final effluent</text></g><text x="34" y="262" font-size="12.5" fill="#6b7280">Flow direction: left to right</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>2. BOD-COD-DO Relation Graph</h2>
+        <p>Scientific line graph for wastewater dynamics</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">BOD - COD - DO Relation</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">0</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">12</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">24</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">36</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">48</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">60</text><line x1="78.0" x2="78.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="78.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">0</text><line x1="240.3" x2="240.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="240.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="402.7" x2="402.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="402.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="565.0" x2="565.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="565.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="727.3" x2="727.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="727.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="889.7" x2="889.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="889.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1052.0" x2="1052.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1052.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="78.0,128.3 118.6,134.7 159.2,140.8 199.8,146.6 240.3,152.3 280.9,157.7 321.5,163.0 362.1,168.1 402.7,173.2 443.2,178.1 483.8,183.0 524.4,187.9 565.0,192.7 605.6,197.4 646.2,202.2 686.8,206.9 727.3,211.6 767.9,216.3 808.5,220.9 849.1,225.6 889.7,230.2 930.2,234.8 970.8,239.5 1011.4,244.1 1052.0,248.7" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#059669" stroke-width="2.5" points="78.0,28.9 118.6,33.9 159.2,38.8 199.8,43.5 240.3,48.2 280.9,52.7 321.5,57.1 362.1,61.5 402.7,65.8 443.2,70.1 483.8,74.3 524.4,78.5 565.0,82.6 605.6,86.7 646.2,90.8 686.8,94.9 727.3,98.9 767.9,102.9 808.5,106.9 849.1,110.9 889.7,114.9 930.2,118.9 970.8,122.9 1011.4,126.8 1052.0,130.8" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#d97706" stroke-width="2.5" points="78.0,290.2 118.6,288.7 159.2,287.3 199.8,285.9 240.3,284.6 280.9,283.4 321.5,282.3 362.1,281.3 402.7,280.4 443.2,279.7 483.8,279.0 524.4,278.4 565.0,277.8 605.6,277.2 646.2,276.7 686.8,276.1 727.3,275.4 767.9,274.6 808.5,273.8 849.1,272.8 889.7,271.7 930.2,270.5 970.8,269.2 1011.4,267.9 1052.0,266.4" stroke-linecap="round" stroke-linejoin="round"></polyline><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#2563eb" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">BOD</text></g></g><g transform="translate(0,20)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#059669" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">COD</text></g></g><g transform="translate(0,40)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#d97706" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">DO</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Time (hours)</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">Concentration</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>3. System Architecture</h2>
+        <p>AI-based Smart STP prediction pipeline</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="250" viewBox="0 0 1180 250" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="250" fill="#ffffff"></rect><text x="54" y="26" font-size="16" fill="#111827" font-weight="600">System Architecture</text><text x="54" y="46" font-size="12.5" fill="#6b7280">Left-to-right pipeline with labeled data flow.</text><rect x="54.0" y="92" width="195.2" height="84" rx="14" fill="#eff6ff" stroke="#cbd5e1"></rect><text x="151.6" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Data Generator</text><line x1="249.2" y1="134" x2="271.2" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="273.2" y="92" width="195.2" height="84" rx="14" fill="#ecfeff" stroke="#cbd5e1"></rect><text x="370.8" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Database</text><line x1="468.4" y1="134" x2="490.4" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="492.4" y="92" width="195.2" height="84" rx="14" fill="#f8fafc" stroke="#cbd5e1"></rect><text x="590.0" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">CNN-LSTM-Attention Model</text><line x1="687.6" y1="134" x2="709.6" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="711.6" y="92" width="195.2" height="84" rx="14" fill="#fff7ed" stroke="#cbd5e1"></rect><text x="809.2" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Backend API</text><line x1="906.8" y1="134" x2="928.8" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="930.8" y="92" width="195.2" height="84" rx="14" fill="#fef2f2" stroke="#cbd5e1"></rect><text x="1028.4" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Web Dashboard</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>4. Data Generator + Daily Spike</h2>
+        <p>Daily pattern with one abnormal event</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">Daily Wastewater Pattern with Spike</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">8</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">14</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">20</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">26</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">32</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">38</text><line x1="78.0" x2="78.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="78.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">0</text><line x1="240.3" x2="240.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="240.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="402.7" x2="402.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="402.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="565.0" x2="565.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="565.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="727.3" x2="727.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="727.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="889.7" x2="889.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="889.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1052.0" x2="1052.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1052.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="78.0,212.0 118.6,208.4 159.2,205.1 199.8,202.2 240.3,200.0 280.9,198.7 321.5,161.4 362.1,161.9 402.7,163.2 443.2,165.4 483.8,168.3 524.4,208.4 565.0,193.6 605.6,197.2 646.2,200.5 686.8,203.4 727.3,205.6 767.9,96.5 808.5,225.8 849.1,225.3 889.7,224.0 930.2,221.8 970.8,218.9 1011.4,215.6 1052.0,212.0" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="767.9" cy="96.5" r="7" fill="#dc2626" stroke="#fff" stroke-width="2"></circle><line x1="767.9" y1="87.5" x2="843.9" y2="62.5" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrow)"></line><rect x="837.9" y="42.5" rx="8" ry="8" width="170" height="28" fill="#fff7ed" stroke="#f59e0b" /><text x="922.9" y="61.0" text-anchor="middle" font-size="12.5" fill="#9a3412">Spike</text><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#2563eb" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">BOD</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Time (0-24 hours)</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">BOD values</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>5. Data Flow Diagram</h2>
+        <p>Core AI prediction flow</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="250" viewBox="0 0 1180 250" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="250" fill="#ffffff"></rect><text x="54" y="26" font-size="16" fill="#111827" font-weight="600">Data Flow Diagram</text><text x="54" y="46" font-size="12.5" fill="#6b7280">Left-to-right pipeline with labeled data flow.</text><rect x="54.0" y="92" width="195.2" height="84" rx="14" fill="#eff6ff" stroke="#cbd5e1"></rect><text x="151.6" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Data Generator</text><line x1="249.2" y1="134" x2="271.2" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="273.2" y="92" width="195.2" height="84" rx="14" fill="#ecfeff" stroke="#cbd5e1"></rect><text x="370.8" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Database</text><line x1="468.4" y1="134" x2="490.4" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="492.4" y="92" width="195.2" height="84" rx="14" fill="#f8fafc" stroke="#cbd5e1"></rect><text x="590.0" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">AI Model</text><line x1="687.6" y1="134" x2="709.6" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="711.6" y="92" width="195.2" height="84" rx="14" fill="#fff7ed" stroke="#cbd5e1"></rect><text x="809.2" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Prediction Output</text><line x1="906.8" y1="134" x2="928.8" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="930.8" y="92" width="195.2" height="84" rx="14" fill="#fef2f2" stroke="#cbd5e1"></rect><text x="1028.4" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Dashboard</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>6. CNN-LSTM-Attention Model</h2>
+        <p>Deep learning architecture overview</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="250" viewBox="0 0 1180 250" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="250" fill="#ffffff"></rect><text x="54" y="26" font-size="16" fill="#111827" font-weight="600">CNN-LSTM-Attention Architecture</text><text x="54" y="46" font-size="12.5" fill="#6b7280">Left-to-right pipeline with labeled data flow.</text><rect x="54.0" y="92" width="195.2" height="84" rx="14" fill="#eff6ff" stroke="#cbd5e1"></rect><text x="151.6" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Input</text><line x1="249.2" y1="134" x2="271.2" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="273.2" y="92" width="195.2" height="84" rx="14" fill="#ecfeff" stroke="#cbd5e1"></rect><text x="370.8" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">CNN Layers</text><line x1="468.4" y1="134" x2="490.4" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="492.4" y="92" width="195.2" height="84" rx="14" fill="#f8fafc" stroke="#cbd5e1"></rect><text x="590.0" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">LSTM Layers</text><line x1="687.6" y1="134" x2="709.6" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="711.6" y="92" width="195.2" height="84" rx="14" fill="#fff7ed" stroke="#cbd5e1"></rect><text x="809.2" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Attention Layer</text><line x1="906.8" y1="134" x2="928.8" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="930.8" y="92" width="195.2" height="84" rx="14" fill="#fef2f2" stroke="#cbd5e1"></rect><text x="1028.4" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Dense Output</text></svg>
+    </article>
+    
+    <article class="panel wide">
+      <div class="panel-head">
+        <h2>7. Attention Mechanism</h2>
+        <p>How the network focuses on important inputs</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="320" viewBox="0 0 1100 320" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1100" height="320" fill="#ffffff"></rect><text x="40" y="24" font-size="16" fill="#111827" font-weight="600">Attention Mechanism</text><text x="40" y="42" font-size="12.5" fill="#6b7280">Heat intensity represents attention weight on each input token.</text><line x1="84.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="40" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.38)" stroke="#93c5fd"></rect><rect x="40" y="168.8" width="88" height="11.2" rx="10" fill="#2563eb" opacity="0.37"></rect><text x="84.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q1</text><text x="84.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.08</text><line x1="190.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="146" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.42)" stroke="#93c5fd"></rect><rect x="146" y="166.0" width="88" height="14.0" rx="10" fill="#2563eb" opacity="0.42"></rect><text x="190.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q2</text><text x="190.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.1</text><line x1="296.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="252" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.51)" stroke="#93c5fd"></rect><rect x="252" y="160.4" width="88" height="19.6" rx="10" fill="#2563eb" opacity="0.52"></rect><text x="296.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q3</text><text x="296.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.14</text><line x1="402.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="358" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.68)" stroke="#93c5fd"></rect><rect x="358" y="149.2" width="88" height="30.8" rx="10" fill="#2563eb" opacity="0.71"></rect><text x="402.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q4</text><text x="402.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.22</text><line x1="508.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="464" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.60)" stroke="#93c5fd"></rect><rect x="464" y="154.8" width="88" height="25.2" rx="10" fill="#2563eb" opacity="0.61"></rect><text x="508.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q5</text><text x="508.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.18</text><line x1="614.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="570" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.46)" stroke="#93c5fd"></rect><rect x="570" y="163.2" width="88" height="16.8" rx="10" fill="#2563eb" opacity="0.47"></rect><text x="614.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q6</text><text x="614.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.12</text><line x1="720.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="676" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.42)" stroke="#93c5fd"></rect><rect x="676" y="166.0" width="88" height="14.0" rx="10" fill="#2563eb" opacity="0.42"></rect><text x="720.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q7</text><text x="720.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.1</text><line x1="826.0" y1="122" x2="860" y2="186" stroke="#cbd5e1" stroke-width="1.5" opacity="0.75"></line><rect x="782" y="180" width="88" height="48" rx="10" fill="rgba(59,130,246,0.33)" stroke="#93c5fd"></rect><rect x="782" y="171.6" width="88" height="8.4" rx="10" fill="#2563eb" opacity="0.32"></rect><text x="826.0" y="210" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Q8</text><text x="826.0" y="170" text-anchor="middle" font-size="12" fill="#1d4ed8">0.06</text><rect x="860" y="120" width="170" height="100" rx="16" fill="#ecfdf5" stroke="#6ee7b7"></rect><text x="945" y="165" text-anchor="middle" font-size="15" fill="#065f46" font-weight="700">Weighted Output</text><text x="945" y="187" text-anchor="middle" font-size="12.5" fill="#047857">Context-aware representation</text><line x1="48" y1="258" x2="860" y2="170" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="40" y="248" width="460" height="34" rx="9" fill="#f8fafc" stroke="#e2e8f0"></rect><text x="54" y="269" font-size="12.5" fill="#475569">Higher attention weight highlights the most important inputs for the current prediction.</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>8. Alert System Workflow</h2>
+        <p>Threshold-driven alert logic</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="300" viewBox="0 0 1180 300" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="300" fill="#ffffff"></rect><text x="44" y="28" font-size="16" fill="#111827" font-weight="600">Alert System Workflow</text><text x="44" y="48" font-size="12.5" fill="#6b7280">Standard flowchart symbols with a decision branch for threshold evaluation.</text><line x1="194" y1="146.0" x2="232" y2="146.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"></line><line x1="382" y1="146.0" x2="420" y2="146.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"></line><line x1="570" y1="146.0" x2="608" y2="146.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"></line><line x1="758" y1="146.0" x2="796" y2="146.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"></line><rect x="44" y="108" width="150" height="76" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"></rect><text x="119" y="150" text-anchor="middle" font-size="14" fill="#111827" font-weight="600">Input Data</text><rect x="232" y="108" width="150" height="76" rx="14" fill="#eff6ff" stroke="#cbd5e1" stroke-width="1.5"></rect><text x="307" y="150" text-anchor="middle" font-size="14" fill="#111827" font-weight="600">Check Threshold</text><polygon points="495,108 570,146 495,184 420,146" fill="#fff7ed" stroke="#d97706" stroke-width="1.5"></polygon><text x="495" y="150" text-anchor="middle" font-size="14" fill="#111827" font-weight="600">Exceeds Limit?</text><rect x="608" y="108" width="150" height="76" rx="14" fill="#fee2e2" stroke="#cbd5e1" stroke-width="1.5"></rect><text x="683" y="150" text-anchor="middle" font-size="14" fill="#111827" font-weight="600">Generate Alert</text><rect x="796" y="108" width="150" height="76" rx="14" fill="#ecfdf5" stroke="#cbd5e1" stroke-width="1.5"></rect><text x="871" y="150" text-anchor="middle" font-size="14" fill="#111827" font-weight="600">Display to User</text><path d="M 562 130 C 608 90, 598 94, 620 126" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#arrow)"></path><path d="M 495 184 C 495 234, 861 238, 861 192" fill="none" stroke="#16a34a" stroke-width="1.8" marker-end="url(#arrow)"></path><text x="590" y="98" font-size="12.5" fill="#dc2626">Yes</text><text x="472" y="236" font-size="12.5" fill="#16a34a">No</text></svg>
+    </article>
+    
+    <article class="panel wide">
+      <div class="panel-head">
+        <h2>9. Sample Data Table</h2>
+        <p>24 hourly wastewater rows</p>
+      </div>
+      
+    <div class="table-card">
+      <div class="table-head">
+        <div>
+          <h3>Hourly Wastewater Data</h3>
+          <p>24-hour sample table for research and model input validation.</p>
+        </div>
+        <span class="pill">24 rows</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th><th>BOD</th><th>COD</th><th>pH</th><th>DO</th><th>Ammonia</th><th>TP</th>
+            </tr>
+          </thead>
+          <tbody><tr><td>00:00</td><td>14.19</td><td>32.93</td><td>7.23</td><td>6.39</td><td>4.01</td><td>1.28</td></tr><tr><td>01:00</td><td>13.43</td><td>34.65</td><td>7.2</td><td>6.05</td><td>4.3</td><td>1.35</td></tr><tr><td>02:00</td><td>14.55</td><td>42.32</td><td>7.18</td><td>6.17</td><td>4.15</td><td>1.45</td></tr><tr><td>03:00</td><td>17.67</td><td>40.36</td><td>7.24</td><td>6.01</td><td>5.36</td><td>1.59</td></tr><tr><td>04:00</td><td>16.77</td><td>39.71</td><td>7.22</td><td>6.21</td><td>5.32</td><td>1.77</td></tr><tr><td>05:00</td><td>21.82</td><td>60</td><td>7.35</td><td>5.76</td><td>4.96</td><td>1.91</td></tr><tr><td>06:00</td><td>36.79</td><td>80.67</td><td>7.31</td><td>1.9</td><td>6.79</td><td>2.03</td></tr><tr><td>07:00</td><td>26.2</td><td>55.89</td><td>7.14</td><td>5.26</td><td>6.35</td><td>2.29</td></tr><tr><td>08:00</td><td>28.5</td><td>65.57</td><td>6.99</td><td>4.77</td><td>6.67</td><td>2.38</td></tr><tr><td>09:00</td><td>24.38</td><td>65.42</td><td>7.18</td><td>5.02</td><td>6.04</td><td>1.9</td></tr><tr><td>10:00</td><td>27.59</td><td>70.13</td><td>7.02</td><td>5.06</td><td>6.64</td><td>2.3</td></tr><tr><td>11:00</td><td>16.59</td><td>39.64</td><td>7.41</td><td>5.84</td><td>4.52</td><td>1.63</td></tr><tr><td>12:00</td><td>23.05</td><td>64.99</td><td>7.16</td><td>5.65</td><td>5.89</td><td>1.78</td></tr><tr><td>13:00</td><td>19.94</td><td>47.42</td><td>7.25</td><td>5.77</td><td>5.83</td><td>1.92</td></tr><tr><td>14:00</td><td>37.63</td><td>73.65</td><td>7.24</td><td>2.86</td><td>9.23</td><td>2.74</td></tr><tr><td>15:00</td><td>20.05</td><td>45.51</td><td>7.16</td><td>5.74</td><td>5.13</td><td>1.79</td></tr><tr><td>16:00</td><td>18.6</td><td>44.87</td><td>7.22</td><td>5.67</td><td>4.93</td><td>1.75</td></tr><tr><td>17:00</td><td>14.82</td><td>35.07</td><td>7.05</td><td>6.06</td><td>4.99</td><td>1.67</td></tr><tr><td>18:00</td><td>15.72</td><td>39.06</td><td>7.42</td><td>5.84</td><td>4.15</td><td>1.55</td></tr><tr><td>19:00</td><td>17.43</td><td>38.56</td><td>7.11</td><td>4.71</td><td>10.83</td><td>3.87</td></tr><tr><td>20:00</td><td>15.09</td><td>38.09</td><td>7.35</td><td>6.49</td><td>4.87</td><td>1.41</td></tr><tr><td>21:00</td><td>15</td><td>36.82</td><td>7.12</td><td>5.92</td><td>4.29</td><td>1.31</td></tr><tr><td>22:00</td><td>13.22</td><td>31.97</td><td>7.36</td><td>6.42</td><td>4.41</td><td>1.59</td></tr><tr><td>23:00</td><td>15.29</td><td>37.06</td><td>7.11</td><td>6.12</td><td>4.23</td><td>1.41</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>10. Spike Visualization Graph</h2>
+        <p>Highlighted abnormal spike point</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">Spike Visualization</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">12</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">15.6</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">19.2</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">22.8</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">26.4</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">30</text><line x1="78.0" x2="78.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="78.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">0</text><line x1="240.3" x2="240.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="240.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="402.7" x2="402.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="402.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="565.0" x2="565.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="565.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="727.3" x2="727.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="727.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="889.7" x2="889.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="889.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1052.0" x2="1052.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1052.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#0f766e" stroke-width="2.5" points="78.0,242.7 118.6,237.1 159.2,231.9 199.8,227.5 240.3,224.1 280.9,221.9 321.5,221.2 362.1,221.9 402.7,224.1 443.2,227.5 483.8,231.9 524.4,237.1 565.0,242.7 605.6,248.2 646.2,253.4 686.8,104.5 727.3,261.3 767.9,263.4 808.5,264.1 849.1,263.4 889.7,261.3 930.2,257.8 970.8,253.4 1011.4,248.2 1052.0,242.7" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="686.8" cy="104.5" r="7" fill="#dc2626" stroke="#fff" stroke-width="2"></circle><line x1="686.8" y1="95.5" x2="762.8" y2="70.5" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrow)"></line><rect x="756.8" y="50.5" rx="8" ry="8" width="170" height="28" fill="#fff7ed" stroke="#f59e0b" /><text x="841.8" y="69.0" text-anchor="middle" font-size="12.5" fill="#9a3412">Abnormal Spike Event</text><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#0f766e" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">BOD</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Time (hours)</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">BOD</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>11. Model Training Pipeline</h2>
+        <p>Machine learning workflow</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="250" viewBox="0 0 1180 250" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="250" fill="#ffffff"></rect><text x="54" y="26" font-size="16" fill="#111827" font-weight="600">Model Training Pipeline</text><text x="54" y="46" font-size="12.5" fill="#6b7280">Left-to-right pipeline with labeled data flow.</text><rect x="54.0" y="92" width="195.2" height="84" rx="14" fill="#eff6ff" stroke="#cbd5e1"></rect><text x="151.6" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Data Collection</text><line x1="249.2" y1="134" x2="271.2" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="273.2" y="92" width="195.2" height="84" rx="14" fill="#ecfeff" stroke="#cbd5e1"></rect><text x="370.8" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Preprocessing</text><line x1="468.4" y1="134" x2="490.4" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="492.4" y="92" width="195.2" height="84" rx="14" fill="#f8fafc" stroke="#cbd5e1"></rect><text x="590.0" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Training</text><line x1="687.6" y1="134" x2="709.6" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="711.6" y="92" width="195.2" height="84" rx="14" fill="#fff7ed" stroke="#cbd5e1"></rect><text x="809.2" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Validation</text><line x1="906.8" y1="134" x2="928.8" y2="134" stroke="#94a3b8" stroke-width="2.2" marker-end="url(#arrow)"></line><rect x="930.8" y="92" width="195.2" height="84" rx="14" fill="#fef2f2" stroke="#cbd5e1"></rect><text x="1028.4" y="136" text-anchor="middle" font-size="14.5" fill="#111827" font-weight="600">Prediction</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>12. Real vs Predicted Graph</h2>
+        <p>Actual vs forecast comparison</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">Real vs Predicted Comparison</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">38</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">40</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">42</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">44</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">46</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">48</text><line x1="78.0" x2="78.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="78.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">0</text><line x1="240.3" x2="240.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="240.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="402.7" x2="402.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="402.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="565.0" x2="565.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="565.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="727.3" x2="727.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="727.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="889.7" x2="889.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="889.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1052.0" x2="1052.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1052.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="78.0,179.8 118.6,162.7 159.2,148.3 199.8,137.4 240.3,130.6 280.9,128.3 321.5,130.3 362.1,136.5 402.7,146.1 443.2,158.5 483.8,172.6 524.4,187.7 565.0,202.6 605.6,216.6 646.2,228.7 686.8,238.5 727.3,245.3 767.9,249.0 808.5,249.3 849.1,246.5 889.7,240.6 930.2,232.0 970.8,221.2 1011.4,208.9 1052.0,195.6" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#dc2626" stroke-width="2.5" points="78.0,190.8 118.6,173.7 159.2,159.3 199.8,148.4 240.3,141.6 280.9,139.3 321.5,141.4 362.1,147.5 402.7,157.2 443.2,169.5 483.8,183.7 524.4,198.7 565.0,213.7 605.6,194.5 646.2,206.7 686.8,216.4 727.3,223.2 767.9,226.9 808.5,227.3 849.1,224.4 889.7,218.5 930.2,209.9 970.8,199.2 1011.4,186.8 1052.0,173.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5"></polyline><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#2563eb" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">Actual</text></g></g><g transform="translate(0,20)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#dc2626" stroke-width="3" stroke-dasharray="7 5" stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">Predicted</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Time</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">Value</text></svg>
+    </article>
+    
+    <article class="panel wide">
+      <div class="panel-head">
+        <h2>13. Web Dashboard UI</h2>
+        <p>Modern monitoring dashboard mockup</p>
+      </div>
+      
+    <div class="ui-shell dashboard-preview">
+      <div class="ui-sidebar">
+        <div class="brand-chip">STP</div>
+        <div class="nav-item active">Overview</div>
+        <div class="nav-item">Forecast</div>
+        <div class="nav-item">Alerts</div>
+        <div class="nav-item">Reports</div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-topbar">
+          <div>
+            <h3>Smart STP Monitoring Dashboard</h3>
+            <p>Minimal, research-oriented monitoring UI.</p>
+          </div>
+          <div class="status-chip">Operational</div>
+        </div>
+        <div class="metric-grid"><div class="metric-card normal"><span>BOD</span><strong>22.4 mg/L</strong><small>Current reading</small></div><div class="metric-card normal"><span>COD</span><strong>48.2 mg/L</strong><small>Current reading</small></div><div class="metric-card warning"><span>DO</span><strong>5.9 mg/L</strong><small>Current reading</small></div><div class="metric-card normal"><span>pH</span><strong>7.1</strong><small>Current reading</small></div></div>
+        <div class="panel-grid">
+          <div class="chart-panel">
+            <h4>Line Charts</h4>
+            <div class="mini-chart"></div>
+            <div class="mini-chart alt"></div>
+          </div>
+          <div class="forecast-panel">
+            <h4>Hourly Forecast</h4>
+            <div class="forecast-grid"><div class="forecast-card warn"><span>08:00</span><strong>26</strong><small>BOD mg/L</small></div><div class="forecast-card ok"><span>12:00</span><strong>21</strong><small>BOD mg/L</small></div><div class="forecast-card ok"><span>16:00</span><strong>19</strong><small>BOD mg/L</small></div><div class="forecast-card warn"><span>20:00</span><strong>28</strong><small>BOD mg/L</small></div></div>
+          </div>
+        </div>
+        <div class="alert-panel">
+          <h4>Alerts</h4>
+          <div class="alert-row warning"><strong>Warning</strong><span>DO slightly below target at 05:00</span></div>
+          <div class="alert-row critical"><strong>Critical</strong><span>BOD spike detected at 14:00</span></div>
+        </div>
+      </div>
+    </div>
+    
+    </article>
+    
+    <article class="panel wide">
+      <div class="panel-head">
+        <h2>14. Alert UI</h2>
+        <p>Warning and critical notification cards</p>
+      </div>
+      
+    <div class="ui-shell alert-preview">
+      <div class="notification warning">
+        <span>Warning Alert</span>
+        <strong>DO trending below safe range</strong>
+        <p>05:00 • Review aeration settings and check blower pressure.</p>
+      </div>
+      <div class="notification critical">
+        <span>Critical Alert</span>
+        <strong>Organic load spike detected</strong>
+        <p>14:00 • BOD and COD exceed threshold; operator intervention required.</p>
+      </div>
+    </div>
+    
+    </article>
+    
+    <article class="panel wide">
+      <div class="panel-head">
+        <h2>15. Login Page</h2>
+        <p>Minimal sign-in screen</p>
+      </div>
+      
+    <div class="ui-shell login-preview">
+      <div class="login-hero">
+        <div class="brand-chip">S</div>
+        <h3>SPECTRUM DYE WORKS</h3>
+        <p>Clean login page for operators and administrators.</p>
+      </div>
+      <form class="login-form">
+        <label>Username</label>
+        <input type="text" value="operator" />
+        <label>Password</label>
+        <input type="password" value="••••••••" />
+        <button type="button">Login</button>
+      </form>
+    </div>
+    
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>16. Accuracy Graph</h2>
+        <p>Training and validation accuracy across epochs</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">Training vs Validation Accuracy</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">0.6</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">0.6</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">0.7</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">0.8</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">0.9</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">1</text><line x1="199.8" x2="199.8" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="199.8" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="362.1" x2="362.1" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="362.1" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="524.4" x2="524.4" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="524.4" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="686.8" x2="686.8" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="686.8" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="849.1" x2="849.1" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="849.1" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1011.4" x2="1011.4" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1011.4" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="78.0,272.0 118.6,261.4 159.2,250.5 199.8,239.2 240.3,227.6 280.9,215.9 321.5,204.2 362.1,192.6 402.7,181.3 443.2,170.4 483.8,159.9 524.4,149.6 565.0,139.8 605.6,130.1 646.2,120.7 686.8,111.4 727.3,102.3 767.9,93.2 808.5,84.2 849.1,75.3 889.7,66.4 930.2,57.5 970.8,48.7 1011.4,39.8 1052.0,31.0" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#16a34a" stroke-width="2.5" points="78.0,286.2 118.6,277.3 159.2,268.2 199.8,259.0 240.3,249.5 280.9,240.0 321.5,230.3 362.1,220.6 402.7,210.9 443.2,201.2 483.8,191.7 524.4,182.3 565.0,173.0 605.6,163.9 646.2,155.0 686.8,146.2 727.3,137.6 767.9,129.0 808.5,122.8 849.1,116.7 889.7,110.7 930.2,104.7 970.8,98.8 1011.4,92.8 1052.0,86.9" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5"></polyline><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#2563eb" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">Training Accuracy</text></g></g><g transform="translate(0,20)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#16a34a" stroke-width="3" stroke-dasharray="7 5" stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">Validation Accuracy</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Epochs</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">Accuracy</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>17. Parameter Trend Graph</h2>
+        <p>Multi-line operational trend chart</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">Parameter Trend Graph</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">0</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">11</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">22</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">33</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">44</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">55</text><line x1="78.0" x2="78.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="78.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">0</text><line x1="240.3" x2="240.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="240.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="402.7" x2="402.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="402.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="565.0" x2="565.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="565.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="727.3" x2="727.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="727.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="889.7" x2="889.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="889.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1052.0" x2="1052.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1052.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="78.0,183.6 118.6,179.8 159.2,176.3 199.8,173.3 240.3,170.9 280.9,169.3 321.5,159.5 362.1,159.7 402.7,160.8 443.2,162.8 483.8,165.5 524.4,177.8 565.0,181.4 605.6,185.2 646.2,188.8 686.8,192.2 727.3,195.0 767.9,197.0 808.5,198.3 849.1,198.6 889.7,198.0 930.2,196.5 970.8,194.2 1011.4,191.2 1052.0,187.8" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#dc2626" stroke-width="2.5" points="78.0,73.6 118.6,69.5 159.2,66.3 199.8,64.2 240.3,63.2 280.9,63.4 321.5,49.9 362.1,52.5 402.7,56.1 443.2,60.5 483.8,65.3 524.4,85.4 565.0,90.2 605.6,94.7 646.2,98.4 686.8,101.2 727.3,102.8 767.9,103.3 808.5,102.4 849.1,100.4 889.7,97.4 930.2,93.4 970.8,88.8 1011.4,83.9 1052.0,78.9" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#7c3aed" stroke-width="2.5" points="78.0,268.4 118.6,268.2 159.2,268.1 199.8,268.0 240.3,267.9 280.9,267.8 321.5,267.7 362.1,267.7 402.7,267.6 443.2,267.6 483.8,267.6 524.4,267.6 565.0,267.7 605.6,267.7 646.2,267.8 686.8,267.9 727.3,268.0 767.9,268.1 808.5,268.3 849.1,268.4 889.7,268.5 930.2,268.6 970.8,268.7 1011.4,268.9 1052.0,268.9" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline fill="none" stroke="#059669" stroke-width="2.5" points="78.0,277.9 118.6,278.5 159.2,279.1 199.8,279.6 240.3,280.1 280.9,280.4 321.5,283.7 362.1,283.9 402.7,283.9 443.2,283.8 483.8,283.7 524.4,280.3 565.0,279.9 605.6,279.5 646.2,278.9 686.8,278.3 727.3,277.7 767.9,277.1 808.5,276.6 849.1,276.1 889.7,275.6 930.2,275.3 970.8,275.0 1011.4,274.9 1052.0,274.9" stroke-linecap="round" stroke-linejoin="round"></polyline><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#2563eb" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">BOD</text></g></g><g transform="translate(0,20)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#dc2626" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">COD</text></g></g><g transform="translate(0,40)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#7c3aed" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">pH</text></g></g><g transform="translate(0,60)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#059669" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">DO</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Time</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">Trend value</text></svg>
+    </article>
+    
+    <article class="panel ">
+      <div class="panel-head">
+        <h2>18. Alert Detection Graph</h2>
+        <p>Anomaly-focused time series</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1080" height="360" fill="#ffffff"></rect><text x="78" y="20" font-size="16" fill="#111827" font-weight="600">Alert Detection Graph</text><line x1="78" x2="1052" y1="304.0" y2="304.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="308.0" text-anchor="end" font-size="13" fill="#6b7280">12</text><line x1="78" x2="1052" y1="248.8" y2="248.8" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="252.8" text-anchor="end" font-size="13" fill="#6b7280">15.6</text><line x1="78" x2="1052" y1="193.6" y2="193.6" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="197.6" text-anchor="end" font-size="13" fill="#6b7280">19.2</text><line x1="78" x2="1052" y1="138.4" y2="138.4" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="142.4" text-anchor="end" font-size="13" fill="#6b7280">22.8</text><line x1="78" x2="1052" y1="83.2" y2="83.2" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="87.2" text-anchor="end" font-size="13" fill="#6b7280">26.4</text><line x1="78" x2="1052" y1="28.0" y2="28.0" stroke="#e5e7eb" stroke-width="1" /><text x="68" y="32.0" text-anchor="end" font-size="13" fill="#6b7280">30</text><line x1="78.0" x2="78.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="78.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">0</text><line x1="240.3" x2="240.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="240.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">4</text><line x1="402.7" x2="402.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="402.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">8</text><line x1="565.0" x2="565.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="565.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">12</text><line x1="727.3" x2="727.3" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="727.3" y="328" text-anchor="middle" font-size="13" fill="#6b7280">16</text><line x1="889.7" x2="889.7" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="889.7" y="328" text-anchor="middle" font-size="13" fill="#6b7280">20</text><line x1="1052.0" x2="1052.0" y1="28" y2="304" stroke="#f3f4f6" stroke-width="1" /><text x="1052.0" y="328" text-anchor="middle" font-size="13" fill="#6b7280">24</text><polyline fill="none" stroke="#7c3aed" stroke-width="2.5" points="78.0,242.7 118.6,237.1 159.2,231.9 199.8,227.5 240.3,224.1 280.9,221.9 321.5,221.2 362.1,221.9 402.7,224.1 443.2,227.5 483.8,231.9 524.4,237.1 565.0,242.7 605.6,248.2 646.2,253.4 686.8,104.5 727.3,261.3 767.9,263.4 808.5,264.1 849.1,263.4 889.7,261.3 930.2,257.8 970.8,253.4 1011.4,248.2 1052.0,242.7" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="686.8" cy="104.5" r="7" fill="#dc2626" stroke="#fff" stroke-width="2"></circle><line x1="686.8" y1="95.5" x2="762.8" y2="70.5" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrow)"></line><rect x="756.8" y="50.5" rx="8" ry="8" width="170" height="28" fill="#fff7ed" stroke="#f59e0b" /><text x="841.8" y="69.0" text-anchor="middle" font-size="12.5" fill="#9a3412">Alert Triggered</text><g transform="translate(782,32)"><g transform="translate(0,0)"><g transform="translate(0, 0)"><line x1="0" y1="0" x2="28" y2="0" stroke="#7c3aed" stroke-width="3"  stroke-linecap="round"></line><text x="38" y="5" font-size="13" fill="#374151">Time Series</text></g></g></g><text x="565.0" y="346" text-anchor="middle" font-size="13" fill="#6b7280">Time</text><text x="20" y="166.0" transform="rotate(-90 20 166.0)" text-anchor="middle" font-size="13" fill="#6b7280">Value</text></svg>
+    </article>
+    
+    <article class="panel wide">
+      <div class="panel-head">
+        <h2>7b. Attention Heatmap</h2>
+        <p>Complementary weight view</p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="280" viewBox="0 0 1180 280" role="img">
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+        <path d="M0,0 L12,6 L0,12 z" fill="#6b7280"></path>
+      </marker>
+      <linearGradient id="softBlue" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#dbeafe"></stop>
+        <stop offset="100%" stop-color="#eff6ff"></stop>
+      </linearGradient>
+      <linearGradient id="softGreen" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#d1fae5"></stop>
+        <stop offset="100%" stop-color="#ecfdf5"></stop>
+      </linearGradient>
+      <linearGradient id="softAmber" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fef3c7"></stop>
+        <stop offset="100%" stop-color="#fffbeb"></stop>
+      </linearGradient>
+      <linearGradient id="softRose" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#fee2e2"></stop>
+        <stop offset="100%" stop-color="#fff1f2"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1180" height="280" fill="#ffffff"></rect><text x="58" y="26" font-size="16" fill="#111827" font-weight="600">Attention Weights Visualization</text><text x="58" y="46" font-size="12.5" fill="#6b7280">Darker cells indicate stronger attention on the corresponding input positions.</text><rect x="58" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="58" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.38"></rect><text x="117.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x1</text><text x="117.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.06</text><rect x="188" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="188" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.49"></rect><text x="247.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x2</text><text x="247.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.09</text><rect x="318" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="318" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.55"></rect><text x="377.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x3</text><text x="377.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.11</text><rect x="448" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="448" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.86"></rect><text x="507.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x4</text><text x="507.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.2</text><rect x="578" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="578" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.83"></rect><text x="637.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x5</text><text x="637.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.19</text><rect x="708" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="708" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.72"></rect><text x="767.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x6</text><text x="767.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.16</text><rect x="838" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="838" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.55"></rect><text x="897.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x7</text><text x="897.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.11</text><rect x="968" y="72" width="118" height="62" rx="12" fill="#eff6ff" stroke="#bfdbfe"></rect><rect x="968" y="72" width="118" height="62" rx="12" fill="#1d4ed8" opacity="0.45"></rect><text x="1027.0" y="102" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">x8</text><text x="1027.0" y="120" text-anchor="middle" font-size="12" fill="#1d4ed8">0.08</text><line x1="58" y1="168" x2="1086" y2="168" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrow)"></line><rect x="58" y="182" width="360" height="40" rx="10" fill="#f8fafc" stroke="#e2e8f0"></rect><text x="76" y="207" font-size="12.5" fill="#475569">Weighted sum compresses the attended sequence into a focused representation.</text></svg>
+    </article>
+    
+        </section>
+      </main>
+    </body>
+    </html>
+    

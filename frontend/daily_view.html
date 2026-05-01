@@ -1,0 +1,51 @@
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hourly Forecast - SPECTRUM DYE WORKS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/frontend/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <main class="dashboard-card" style="margin-top: 0; border-radius: 0; min-height: 100vh;">
+        <div class="panel-head">
+          <h2 id="dailyViewTitle">Hourly Forecast</h2>
+        </div>
+
+        <section class="chart-block">
+            <h3>Load (BOD, COD)</h3>
+            <div class="chart-frame" style="height: 350px;"><canvas id="dailyLoadChart"></canvas></div>
+        </section>
+        <section class="chart-block">
+            <h3>Nutrients & Other Parameters</h3>
+            <div class="chart-frame" style="height: 350px;"><canvas id="dailyOtherChart"></canvas></div>
+        </section>
+
+        <div class="table-wrap" style="margin-top: 24px;">
+            <h3>Hourly Data Table</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>BOD</th>
+                  <th>COD</th>
+                  <th>pH</th>
+                  <th>DO</th>
+                  <th>NH3-N</th>
+                  <th>TP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dailyTable"></tbody>
+            </table>
+        </div>
+    </main>
+    <script src="/frontend/daily_view.js"></script>
+  </body>
+</html>

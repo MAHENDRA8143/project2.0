@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+*.log
+backend/data/*.keras
+backend/data/*.pkl
+backend/data/*.joblib
+backend/data/synthetic_stp_data.csv
