@@ -21,8 +21,11 @@ app.add_middleware(
 app.include_router(router)
 
 frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
+frontend_dist_dir = frontend_dir / "dist"
 if frontend_dir.exists():
     app.mount("/frontend", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
+if (frontend_dist_dir / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=str(frontend_dist_dir / "assets")), name="react-assets")
 
 
 @app.on_event("startup")
@@ -32,7 +35,7 @@ def startup_seed_data() -> None:
 
 @app.get("/")
 def root():
-    index_file = frontend_dir / "index.html"
+    index_file = frontend_dist_dir / "index.html" if (frontend_dist_dir / "index.html").exists() else frontend_dir / "index.html"
     if index_file.exists():
         return FileResponse(index_file)
     return {"message": "Frontend not found. Open /frontend after adding UI files."}

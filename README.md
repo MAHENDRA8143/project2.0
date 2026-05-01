@@ -67,9 +67,11 @@ uvicorn app.main:app --reload --app-dir backend
 ```
 
 ## Step 5 -> Frontend Dashboard
-- UI: HTML + JS + CSS
+- UI: React + Vite, reusing the original dashboard styling and behavior
 - Files:
   - `frontend/index.html`
+  - `frontend/src/App.jsx`
+  - `frontend/src/main.jsx`
   - `frontend/app.js`
   - `frontend/styles.css`
 - Features:
@@ -83,6 +85,19 @@ uvicorn app.main:app --reload --app-dir backend
 
 Open in browser:
 - `http://127.0.0.1:8000/`
+
+Run React frontend locally:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Build React frontend:
+```bash
+cd frontend
+npm run build
+```
 
 ## Step 6 -> Integration
 System flow:
