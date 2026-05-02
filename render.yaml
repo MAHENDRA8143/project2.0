@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: project2-0
+    env: python
+    rootDir: .
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r backend/requirements.txt && cd frontend && npm install && npm run build
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
