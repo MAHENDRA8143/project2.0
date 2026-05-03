@@ -1,4 +1,4 @@
-const API_BASE = "/api";
+const API_BASE = "https://project2-0-1.onrender.com/api";
 
 // Scale up the base HTML font size to make text more readable
 document.documentElement.style.fontSize = "115%";
