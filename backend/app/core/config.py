@@ -5,9 +5,7 @@ DATA_DIR = BASE_DIR / "backend" / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 CSV_PATH = DATA_DIR / "synthetic_stp_data.csv"
-MODEL_PATH = DATA_DIR / "cnn_lstm_attention.keras"
-SCALER_X_PATH = DATA_DIR / "scaler_x.joblib"
-SCALER_Y_PATH = DATA_DIR / "scaler_y.joblib"
+MODEL_PATH = DATA_DIR / "stp_forecaster.joblib"
 
 FEATURES = ["BOD", "COD", "pH", "DO", "NH3_N", "TP"]
 
