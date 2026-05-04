@@ -9,7 +9,7 @@ from app.services.model_pipeline import STPForecaster
 
 
 if __name__ == "__main__":
-    df = ensure_dataset(days=60)
-    forecaster = STPForecaster(sequence_length=72, horizon=24)
+    df = ensure_dataset(days=90)  # More training data
+    forecaster = STPForecaster(sequence_length=72, horizon=24)  # 3 days
     forecaster.train(df, epochs=10)
-    print("CNN-LSTM-Attention model trained and saved.")
+    print("Model trained and saved!")

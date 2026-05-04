@@ -5,7 +5,12 @@ from dataclasses import dataclass
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import Ridge
+from sklearn.ensemble import (
+    HistGradientBoostingRegressor,
+    RandomForestRegressor,
+    GradientBoostingRegressor,
+    VotingRegressor,
+)
 from sklearn.preprocessing import StandardScaler
 
 from app.core.config import FEATURES, MODEL_PATH
@@ -18,11 +23,12 @@ class ForecastResult:
 
 @dataclass
 class ForecastBundle:
-    model: Ridge
+    models: dict  # One ensemble model per feature
     scaler_x: StandardScaler
     scaler_y: StandardScaler
     sequence_length: int
     feature_names: list[str]
+    feature_scalers: dict  # Per-feature scalers
 
 
 class STPForecaster:
@@ -42,6 +48,41 @@ class STPForecaster:
             raise ValueError("Not enough data to create training windows.")
 
         return np.array(x_data), np.array(y_data)
+
+    def _add_temporal_features(self, x_data: np.ndarray) -> np.ndarray:
+        """Add advanced temporal and statistical features"""
+        n_samples, seq_len, n_features = x_data.shape
+        features = []
+        
+        for i in range(n_samples):
+            window = x_data[i]
+            feat_row = []
+            
+            # Raw flattened sequence
+            feat_row.extend(window.flatten())
+            
+            # Advanced statistical features per feature
+            for feat_idx in range(n_features):
+                feat_vals = window[:, feat_idx]
+                feat_row.extend([
+                    np.mean(feat_vals),                    # Mean
+                    np.std(feat_vals),                     # Std dev
+                    np.min(feat_vals),                     # Min
+                    np.max(feat_vals),                     # Max
+                    np.ptp(feat_vals),                     # Range
+                    feat_vals[-1],                         # Last value
+                    feat_vals[0],                          # First value
+                    np.median(feat_vals),                  # Median
+                    np.percentile(feat_vals, 25),          # Q1
+                    np.percentile(feat_vals, 75),          # Q3
+                    np.sum(np.abs(np.diff(feat_vals))),    # Total variation
+                    np.max(np.abs(np.diff(feat_vals))),    # Max change
+                    np.mean(np.abs(np.diff(feat_vals))),   # Mean change
+                ])
+            
+            features.append(feat_row)
+        
+        return np.array(features, dtype=np.float32)
 
     def _save_bundle(self, bundle: ForecastBundle) -> None:
         joblib.dump(bundle, MODEL_PATH)
@@ -63,11 +104,24 @@ class STPForecaster:
 
         predictions: list[np.ndarray] = []
         for _ in range(hours):
-            x_scaled = bundle.scaler_x.transform(current_window.reshape(1, -1))
-            pred_scaled = bundle.model.predict(x_scaled)[0]
-            pred = bundle.scaler_y.inverse_transform(pred_scaled.reshape(1, -1))[0]
+            # Add temporal features
+            window_expanded = current_window.reshape(1, bundle.sequence_length, len(FEATURES))
+            x_features = self._add_temporal_features(window_expanded)
+            x_scaled = bundle.scaler_x.transform(x_features)
+            
+            # Predict each feature using ensemble
+            pred = np.zeros(len(FEATURES), dtype=np.float32)
+            for feat_idx, feature_name in enumerate(FEATURES):
+                ensemble_model = bundle.models[feature_name]
+                pred_scaled = ensemble_model.predict(x_scaled)[0]
+                pred[feat_idx] = bundle.feature_scalers[feature_name].inverse_transform(
+                    pred_scaled.reshape(1, -1)
+                )[0]
+            
+            # Apply constraints
             pred = np.clip(pred, 0.0, None)
-            pred[2] = float(np.clip(pred[2], 5.5, 9.0))
+            pred[2] = float(np.clip(pred[2], 5.5, 9.0))  # pH constraint
+            
             predictions.append(pred)
             current_window = np.vstack([current_window[1:], pred])
 
@@ -78,37 +132,103 @@ class STPForecaster:
         values = df[FEATURES].values.astype(np.float32)
         x_raw, y_raw = self._create_windows(values)
 
+        # Add advanced temporal features
+        print("Extracting advanced temporal features...")
+        x_features = self._add_temporal_features(x_raw)
+
+        # Scale features
         scaler_x = StandardScaler()
-        x_flat = x_raw.reshape(len(x_raw), -1)
-        x_scaled = scaler_x.fit_transform(x_flat).reshape(x_raw.shape)
+        x_scaled = scaler_x.fit_transform(x_features)
 
-        scaler_y = StandardScaler()
-        y_flat = y_raw.reshape(-1, len(FEATURES))
-        y_scaled = scaler_y.fit_transform(y_flat).reshape(y_raw.shape)
-
-        model = Ridge(alpha=1.0)
-        model.fit(x_scaled.reshape(len(x_scaled), -1), y_scaled)
+        # Train ensemble models for each feature
+        models = {}
+        feature_scalers = {}
+        
+        for feat_idx, feature_name in enumerate(FEATURES):
+            print(f"\n[ENSEMBLE] {feature_name}...")
+            y = y_raw[:, feat_idx].astype(np.float32)
+            
+            # Scale target
+            scaler_y = StandardScaler()
+            y_scaled = scaler_y.fit_transform(y.reshape(-1, 1)).ravel()
+            feature_scalers[feature_name] = scaler_y
+            
+            # Create voting ensemble of 3 strong algorithms
+            print(f"  -> Building 3-model ensemble...")
+            
+            # Model 1: HistGradientBoosting (fastest, high performance)
+            model1 = HistGradientBoostingRegressor(
+                loss='squared_error',
+                learning_rate=0.12,
+                max_iter=180,
+                max_depth=7,
+                max_bins=200,
+                min_samples_leaf=5,
+                random_state=42
+            )
+            
+            # Model 2: GradientBoosting (flexible, powerful)
+            model2 = GradientBoostingRegressor(
+                loss='squared_error',
+                learning_rate=0.10,
+                n_estimators=150,
+                max_depth=6,
+                min_samples_split=3,
+                min_samples_leaf=2,
+                subsample=0.95,
+                max_features='sqrt',
+                random_state=42
+            )
+            
+            # Model 3: RandomForest (robust, diverse)
+            model3 = RandomForestRegressor(
+                n_estimators=120,
+                max_depth=12,
+                min_samples_split=3,
+                min_samples_leaf=2,
+                max_features='sqrt',
+                random_state=42,
+                n_jobs=1
+            )
+            
+            # Voting ensemble - no parallelization to avoid issues
+            ensemble = VotingRegressor(
+                estimators=[
+                    ('hist_gb', model1),
+                    ('gb', model2),
+                    ('rf', model3),
+                ],
+                weights=[0.5, 0.35, 0.15],
+                n_jobs=1  # Sequential processing
+            )
+            
+            try:
+                ensemble.fit(x_scaled, y_scaled)
+                train_r2 = ensemble.score(x_scaled, y_scaled)
+                print(f"  -> Ensemble R2: {train_r2:.6f}")
+                models[feature_name] = ensemble
+            except Exception as e:
+                print(f"  -> Ensemble failed: {e}, using HistGB fallback...")
+                model = HistGradientBoostingRegressor(
+                    loss='squared_error',
+                    learning_rate=0.15,
+                    max_iter=100,
+                    max_depth=6,
+                    min_samples_leaf=10,
+                    random_state=42
+                )
+                model.fit(x_scaled, y_scaled)
+                train_r2 = model.score(x_scaled, y_scaled)
+                print(f"  -> Fallback R2: {train_r2:.6f}")
+                models[feature_name] = model
 
         bundle = ForecastBundle(
-            model=model,
+            models=models,
             scaler_x=scaler_x,
             scaler_y=scaler_y,
             sequence_length=self.sequence_length,
             feature_names=list(FEATURES),
+            feature_scalers=feature_scalers,
         )
         self._save_bundle(bundle)
-
-    def predict_next_day(self, df: pd.DataFrame) -> ForecastResult:
-        if not MODEL_PATH.exists():
-            self.train(df)
-
-        pred_df = self._forecast_hours(df, self.horizon)
-        return ForecastResult(prediction_df=pred_df)
-
-    def predict_next_7_days(self, df: pd.DataFrame) -> ForecastResult:
-        """Predict the next 7 days (168 hours) by chaining day-by-day predictions."""
-        if not MODEL_PATH.exists():
-            self.train(df)
-
-        pred_df = self._forecast_hours(df, 24 * 7)
-        return ForecastResult(prediction_df=pred_df)
+        print("\n[SUCCESS] Ensemble model training complete!")
